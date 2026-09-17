@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Calico IP address management</title>
+        <link rel="stylesheet" href="calico.css" />
+        <!-- The bridge to the app. Served by k8sdockside itself, always at this path. -->
+        <script src="/plugin-ui/_sdk/k8sdockside.js"></script>
+    </head>
+    <body class="page page-ipam">
+        <header class="top">
+            <div class="brand">
+                <span id="logo"></span>
+                <div>
+                    <h1>IP address management</h1>
+                    <p id="where" class="faint">Connecting…</p>
+                </div>
+            </div>
+            <label class="search">
+                <span id="search-icon"></span>
+                <input id="query" type="search" placeholder="Find an IP, pod, namespace or node" autocomplete="off" spellcheck="false" />
+            </label>
+            <div class="seg" id="group" role="group" aria-label="Group blocks"></div>
+            <nav class="top-actions" id="top-actions"></nav>
+        </header>
+
+        <p id="error" class="banner error" hidden></p>
+        <section id="empty" hidden></section>
+
+        <div class="layout" id="layout" hidden>
+            <main id="main" class="ipam-main">
+                <section id="stats" class="stats"></section>
+                <section id="attention" class="card" hidden></section>
+                <div id="pools" class="ipam-main"></div>
+            </main>
+            <aside id="inspector" class="inspector" aria-live="polite"></aside>
+        </div>
+
+        <!-- Classic scripts, not type="module": a sandboxed frame has an opaque
+             origin, so a module would be a cross-origin load. -->
+        <script src="selector.js"></script>
+        <script src="model.js"></script>
+        <script src="kit.js"></script>
+        <script src="ipam.js"></script>
+    </body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Calico routing and BGP</title>
+        <link rel="stylesheet" href="calico.css" />
+        <!-- The bridge to the app. Served by k8sdockside itself, always at this path. -->
+        <script src="/plugin-ui/_sdk/k8sdockside.js"></script>
+    </head>
+    <body class="page page-routing">
+        <header class="top">
+            <div class="brand">
+                <span id="logo"></span>
+                <div>
+                    <h1>Routing &amp; BGP</h1>
+                    <p id="where" class="faint">Connecting…</p>
+                </div>
+            </div>
+            <nav class="top-actions push" id="top-actions"></nav>
+        </header>
+
+        <p id="error" class="banner error" hidden></p>
+        <section id="empty" hidden></section>
+        <p id="lede" class="lede" hidden></p>
+
+        <div class="layout" id="layout" hidden>
+            <main id="diagram" class="radial-card"></main>
+            <aside id="inspector" class="inspector" aria-live="polite"></aside>
+        </div>
+
+        <!-- Classic scripts, not type="module": a sandboxed frame has an opaque
+             origin, so a module would be a cross-origin load. -->
+        <script src="selector.js"></script>
+        <script src="model.js"></script>
+        <script src="kit.js"></script>
+        <script src="routing.js"></script>
+    </body>
+</html>

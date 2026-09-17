@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Calico flow logs</title>
+        <link rel="stylesheet" href="calico.css" />
+        <!-- The bridge to the app. Served by k8sdockside itself, always at this path. -->
+        <script src="/plugin-ui/_sdk/k8sdockside.js"></script>
+    </head>
+    <body class="page page-flows">
+        <header class="top">
+            <div class="brand">
+                <span id="logo"></span>
+                <div>
+                    <h1>Flow logs</h1>
+                    <p id="where" class="faint">Connecting…</p>
+                </div>
+            </div>
+            <label class="search">
+                <span id="search-icon"></span>
+                <input id="query" type="search" placeholder="Find a workload, namespace, port, label or policy" autocomplete="off" spellcheck="false" />
+            </label>
+            <div class="seg" id="window" role="group" aria-label="Time window"></div>
+            <nav class="top-actions" id="top-actions"></nav>
+        </header>
+
+        <p id="error" class="banner error" hidden></p>
+        <section id="empty" hidden></section>
+
+        <div id="flows" class="flows-page" hidden>
+            <!-- What Whisker saw, in a sentence. -->
+            <p id="lede" class="lede"></p>
+            <!-- Counts, and how much was denied. -->
+            <section id="stats" class="stats fl-stats"></section>
+            <div class="fl-grid">
+                <!-- Namespace to namespace. -->
+                <section id="map" class="card fl-map-card"></section>
+                <!-- What is being dropped, and by what. -->
+                <section id="denied" class="card fl-denied-card"></section>
+            </div>
+            <!-- Allowed and denied over the window. -->
+            <section id="timeline" class="card fl-timeline-card"></section>
+            <!-- Every flow. -->
+            <section id="table" class="card fl-table-card"></section>
+        </div>
+
+        <div id="scrim" class="scrim"></div>
+        <aside id="drawer" class="drawer" hidden aria-live="polite"></aside>
+
+        <!-- Classic scripts, not type="module": a sandboxed frame has an opaque
+             origin, so a module would be a cross-origin load. -->
+        <script src="selector.js"></script>
+        <script src="model.js"></script>
+        <script src="kit.js"></script>
+        <script src="flows.js"></script>
+    </body>
+</html>

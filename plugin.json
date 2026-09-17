@@ -1,0 +1,199 @@
+{
+    "$schema": "https://raw.githubusercontent.com/rogerwesterbo/k8sdockside/main/docs/plugin.schema.json",
+    "id": "calico",
+    "name": "Calico",
+    "version": "1.0.0",
+    "minAppVersion": "0.0.27",
+    "tagline": "pod networking, IPAM and network policy",
+    "icon": "shield",
+    "docs": "https://docs.tigera.io/calico/latest/about/",
+    "author": "Roger Westerbo",
+    "links": [
+        { "label": "projectcalico.org", "url": "https://www.tigera.io/project-calico/" },
+        { "label": "Documentation", "url": "https://docs.tigera.io/calico/latest/about/" },
+        { "label": "Policy tiers", "url": "https://docs.tigera.io/calico/latest/network-policy/policy-tiers/tiered-policy" },
+        { "label": "GitHub", "url": "https://github.com/projectcalico/calico" },
+        { "label": "Plugin source", "url": "https://github.com/rogerwesterbo/k8sdockside-calico" }
+    ],
+    "description": "Calico gives every pod an address from its IP pools, routes between nodes over BGP or a VXLAN/IPIP overlay, and enforces network policy — Calico's own, tiered, and Kubernetes NetworkPolicies — in iptables, nftables or eBPF.\n\nStart with the Policy board: every tier as a lane in the order Calico evaluates it, each policy as a card with its rules as coloured pips and the workloads it selects. Open a policy to read it rule by rule, or switch to Trace to follow one pod's traffic through the tiers to where it is allowed or dropped. Namespaces that no policy protects are listed with an Isolate button.\n\nIP address management maps every IPAM block by the node it belongs to and how full it is, down to who holds each address; Routing & BGP draws the node mesh, route reflectors and external peers. Flow logs reads Whisker (Calico 3.30+): who talks to whom, what is denied and by which policy, flow by flow. Pods, IP pools and policies also get a Calico panel in their detail view. The pages ask for three changes only — a default-deny NetworkPolicy, turning on Whisker and Goldmane, and a NetworkPolicy that lets the API server reach Whisker — and you see each before it is made.",
+    "requires": [
+        { "kind": "crd:ippools.crd.projectcalico.org", "label": "IP pools" },
+        { "kind": "crd:ipamblocks.crd.projectcalico.org", "label": "IPAM blocks" },
+        { "kind": "crd:blockaffinities.crd.projectcalico.org", "label": "Block affinities" },
+        { "kind": "crd:felixconfigurations.crd.projectcalico.org", "label": "Felix configuration" },
+        { "kind": "crd:networkpolicies.crd.projectcalico.org", "label": "Calico network policies" },
+        { "kind": "crd:globalnetworkpolicies.crd.projectcalico.org", "label": "Global network policies" },
+        { "kind": "crd:tiers.crd.projectcalico.org", "label": "Tiers (3.28+)", "optional": true },
+        { "kind": "crd:stagednetworkpolicies.crd.projectcalico.org", "label": "Staged network policies", "optional": true },
+        { "kind": "crd:stagedglobalnetworkpolicies.crd.projectcalico.org", "label": "Staged global network policies", "optional": true },
+        { "kind": "crd:stagedkubernetesnetworkpolicies.crd.projectcalico.org", "label": "Staged Kubernetes network policies", "optional": true },
+        { "kind": "crd:bgpconfigurations.crd.projectcalico.org", "label": "BGP configuration", "optional": true },
+        { "kind": "crd:bgppeers.crd.projectcalico.org", "label": "BGP peers", "optional": true },
+        { "kind": "crd:bgpfilters.crd.projectcalico.org", "label": "BGP filters", "optional": true },
+        { "kind": "crd:caliconodestatuses.crd.projectcalico.org", "label": "Calico node status", "optional": true },
+        { "kind": "crd:clusterinformations.crd.projectcalico.org", "label": "Cluster information", "optional": true },
+        { "kind": "crd:ipamconfigs.crd.projectcalico.org", "label": "IPAM configuration", "optional": true },
+        { "kind": "crd:ipamhandles.crd.projectcalico.org", "label": "IPAM handles", "optional": true },
+        { "kind": "crd:ipreservations.crd.projectcalico.org", "label": "IP reservations", "optional": true },
+        { "kind": "crd:networksets.crd.projectcalico.org", "label": "Network sets", "optional": true },
+        { "kind": "crd:globalnetworksets.crd.projectcalico.org", "label": "Global network sets", "optional": true },
+        { "kind": "crd:hostendpoints.crd.projectcalico.org", "label": "Host endpoints", "optional": true },
+        { "kind": "crd:kubecontrollersconfigurations.crd.projectcalico.org", "label": "kube-controllers configuration", "optional": true },
+        { "kind": "crd:installations.operator.tigera.io", "label": "Operator installation", "optional": true },
+        { "kind": "crd:tigerastatuses.operator.tigera.io", "label": "Operator status", "optional": true },
+        { "kind": "crd:apiservers.operator.tigera.io", "label": "Calico API server (operator)", "optional": true },
+        { "kind": "crd:whiskers.operator.tigera.io", "label": "Whisker (3.30+)", "optional": true },
+        { "kind": "crd:goldmanes.operator.tigera.io", "label": "Goldmane (3.30+)", "optional": true }
+    ],
+    "ui": {
+        "kinds": ["pods", "nodes", "namespaces", "services", "networkpolicies", "events"],
+        "write": true,
+        "services": [
+            {
+                "id": "whisker",
+                "label": "Whisker flow logs (Calico 3.30–3.32)",
+                "namespace": "calico-system",
+                "name": "whisker",
+                "port": 8081,
+                "paths": ["/whisker-backend/flows"]
+            },
+            {
+                "id": "whisker-tls",
+                "label": "Whisker flow logs (Calico 3.33+)",
+                "namespace": "calico-system",
+                "name": "whisker",
+                "port": 8443,
+                "scheme": "https",
+                "paths": ["/whisker-backend/flows"]
+            }
+        ]
+    },
+    "overview": { "entry": "overview.html" },
+    "views": [
+        { "id": "policies", "label": "Policy board", "icon": "policy", "type": "custom", "entry": "index.html" },
+        { "id": "ipam", "label": "IP address management", "icon": "layers", "type": "custom", "entry": "ipam.html" },
+        { "id": "routing", "label": "Routing & BGP", "icon": "route", "type": "custom", "entry": "routing.html" },
+        { "id": "flows", "label": "Flow logs", "icon": "graph", "type": "custom", "entry": "flows.html" },
+
+        { "id": "tiers", "label": "Tiers", "icon": "priority", "kind": "crd:tiers.crd.projectcalico.org" },
+        { "id": "network-policies", "label": "Network policies", "icon": "shield", "kind": "crd:networkpolicies.crd.projectcalico.org" },
+        { "id": "global-network-policies", "label": "Global network policies", "icon": "globe", "kind": "crd:globalnetworkpolicies.crd.projectcalico.org" },
+        { "id": "k8s-network-policies", "label": "Kubernetes network policies", "icon": "policy", "kind": "networkpolicies" },
+        { "id": "staged-network-policies", "label": "Staged network policies", "icon": "pause", "kind": "crd:stagednetworkpolicies.crd.projectcalico.org" },
+        { "id": "staged-global-network-policies", "label": "Staged global policies", "icon": "pause", "kind": "crd:stagedglobalnetworkpolicies.crd.projectcalico.org" },
+        { "id": "staged-k8s-network-policies", "label": "Staged Kubernetes policies", "icon": "pause", "kind": "crd:stagedkubernetesnetworkpolicies.crd.projectcalico.org" },
+        { "id": "network-sets", "label": "Network sets", "icon": "copies", "kind": "crd:networksets.crd.projectcalico.org" },
+        { "id": "global-network-sets", "label": "Global network sets", "icon": "copies", "kind": "crd:globalnetworksets.crd.projectcalico.org" },
+        { "id": "host-endpoints", "label": "Host endpoints", "icon": "display", "kind": "crd:hostendpoints.crd.projectcalico.org" },
+
+        { "id": "ip-pools", "label": "IP pools", "icon": "database", "kind": "crd:ippools.crd.projectcalico.org" },
+        { "id": "ipam-blocks", "label": "IPAM blocks", "icon": "columns", "kind": "crd:ipamblocks.crd.projectcalico.org" },
+        { "id": "block-affinities", "label": "Block affinities", "icon": "link", "kind": "crd:blockaffinities.crd.projectcalico.org" },
+        { "id": "ip-reservations", "label": "IP reservations", "icon": "lock", "kind": "crd:ipreservations.crd.projectcalico.org" },
+        { "id": "ipam-handles", "label": "IPAM handles", "icon": "type", "kind": "crd:ipamhandles.crd.projectcalico.org" },
+        { "id": "ipam-config", "label": "IPAM configuration", "icon": "sliders", "kind": "crd:ipamconfigs.crd.projectcalico.org" },
+
+        { "id": "bgp-configuration", "label": "BGP configuration", "icon": "settings", "kind": "crd:bgpconfigurations.crd.projectcalico.org" },
+        { "id": "bgp-peers", "label": "BGP peers", "icon": "share", "kind": "crd:bgppeers.crd.projectcalico.org" },
+        { "id": "bgp-filters", "label": "BGP filters", "icon": "sliders", "kind": "crd:bgpfilters.crd.projectcalico.org" },
+        { "id": "node-status", "label": "Calico node status", "icon": "gauge", "kind": "crd:caliconodestatuses.crd.projectcalico.org" },
+
+        { "id": "felix-configuration", "label": "Felix configuration", "icon": "chip", "kind": "crd:felixconfigurations.crd.projectcalico.org" },
+        { "id": "kube-controllers-configuration", "label": "kube-controllers configuration", "icon": "settings", "kind": "crd:kubecontrollersconfigurations.crd.projectcalico.org" },
+        { "id": "cluster-information", "label": "Cluster information", "icon": "info", "kind": "crd:clusterinformations.crd.projectcalico.org" },
+        { "id": "installation", "label": "Operator installation", "icon": "rocket", "kind": "crd:installations.operator.tigera.io" },
+        { "id": "tigera-status", "label": "Operator status", "icon": "check", "kind": "crd:tigerastatuses.operator.tigera.io" },
+        { "id": "api-server", "label": "Calico API server (operator)", "icon": "webhook", "kind": "crd:apiservers.operator.tigera.io" },
+        { "id": "whisker", "label": "Whisker", "icon": "graph", "kind": "crd:whiskers.operator.tigera.io" },
+        { "id": "goldmane", "label": "Goldmane", "icon": "graph", "kind": "crd:goldmanes.operator.tigera.io" },
+
+        { "id": "calico-node", "label": "calico-node pods", "icon": "server", "kind": "pods", "selector": "k8s-app=calico-node" },
+        { "id": "kube-controllers", "label": "kube-controllers pods", "icon": "repeat", "kind": "pods", "selector": "k8s-app=calico-kube-controllers" },
+        { "id": "typha", "label": "Typha pods", "icon": "forward", "kind": "pods", "selector": "k8s-app=calico-typha" },
+        { "id": "apiserver", "label": "Calico API server pods", "icon": "webhook", "kind": "pods", "selector": "apiserver=true" }
+    ],
+    "cards": [
+        { "label": "IP pools", "kind": "crd:ippools.crd.projectcalico.org" },
+        { "label": "Network policies", "kind": "crd:networkpolicies.crd.projectcalico.org" },
+        { "label": "Global network policies", "kind": "crd:globalnetworkpolicies.crd.projectcalico.org" },
+        {
+            "label": "calico-node pods",
+            "kind": "pods",
+            "selector": "k8s-app=calico-node",
+            "groupBy": "status.phase",
+            "tones": { "Running": "ok", "Pending": "warn", "Failed": "error", "Unknown": "warn" }
+        },
+        {
+            "label": "Operator components degraded",
+            "kind": "crd:tigerastatuses.operator.tigera.io",
+            "groupBy": "status.conditions[Degraded]",
+            "tones": { "False": "ok", "True": "error", "Unknown": "warn" }
+        }
+    ],
+    "charts": [
+        {
+            "id": "ipam-in-use",
+            "label": "Addresses in use",
+            "attach": "overview",
+            "unit": "count",
+            "legend": "ippool",
+            "description": "Calico IP allocations in use per IP pool, from calico-kube-controllers' metrics (port 9094 by default).",
+            "query": "sum by (ippool) (ipam_allocations_in_use)"
+        },
+        {
+            "id": "ipam-borrowed",
+            "label": "Borrowed addresses",
+            "attach": "overview",
+            "unit": "count",
+            "legend": "ippool",
+            "description": "Allocations in use on a node other than the one their block is affine to, per IP pool.",
+            "query": "sum by (ippool) (ipam_allocations_borrowed)"
+        },
+        {
+            "id": "felix-policies",
+            "label": "Active policies per node",
+            "attach": "overview",
+            "unit": "count",
+            "legend": "instance",
+            "description": "Policies Felix has programmed because they select a local endpoint, per scraped calico-node. Needs Felix's Prometheus metrics enabled.",
+            "query": "max by (instance) (felix_active_local_policies)"
+        },
+        {
+            "id": "felix-apply-time",
+            "label": "Dataplane apply time",
+            "attach": "overview",
+            "unit": "seconds",
+            "legend": "instance",
+            "description": "Average time Felix took to apply a dataplane update over five minutes, per calico-node.",
+            "query": "sum by (instance) (rate(felix_int_dataplane_apply_time_seconds_sum[5m])) / sum by (instance) (rate(felix_int_dataplane_apply_time_seconds_count[5m]))"
+        },
+        {
+            "id": "pool-in-use",
+            "label": "Addresses in use",
+            "attach": "crd:ippools.crd.projectcalico.org",
+            "unit": "count",
+            "legend": "node",
+            "description": "This pool's addresses in use, per node, from calico-kube-controllers.",
+            "query": "sum by (node) (ipam_allocations_in_use{ippool=\"$name\"})"
+        },
+        {
+            "id": "node-ipam",
+            "label": "Calico addresses in use",
+            "attach": "nodes",
+            "unit": "count",
+            "legend": "ippool",
+            "description": "Calico IP allocations on this node per IP pool, from calico-kube-controllers.",
+            "query": "sum by (ippool) (ipam_allocations_in_use{node=\"$node\"})"
+        }
+    ],
+    "sections": [
+        { "id": "pod", "label": "Calico", "kind": "pods", "entry": "pod.html", "height": 240 },
+        { "id": "policy", "label": "Calico", "kind": "crd:networkpolicies.crd.projectcalico.org", "entry": "policy.html", "height": 360 },
+        { "id": "global-policy", "label": "Calico", "kind": "crd:globalnetworkpolicies.crd.projectcalico.org", "entry": "policy.html", "height": 360 },
+        { "id": "k8s-policy", "label": "Calico", "kind": "networkpolicies", "entry": "policy.html", "height": 360 },
+        { "id": "staged-policy", "label": "Calico", "kind": "crd:stagednetworkpolicies.crd.projectcalico.org", "entry": "policy.html", "height": 360 },
+        { "id": "staged-global-policy", "label": "Calico", "kind": "crd:stagedglobalnetworkpolicies.crd.projectcalico.org", "entry": "policy.html", "height": 360 },
+        { "id": "staged-k8s-policy", "label": "Calico", "kind": "crd:stagedkubernetesnetworkpolicies.crd.projectcalico.org", "entry": "policy.html", "height": 360 },
+        { "id": "ippool", "label": "Addresses", "kind": "crd:ippools.crd.projectcalico.org", "entry": "ippool.html", "height": 320 }
+    ]
+}
