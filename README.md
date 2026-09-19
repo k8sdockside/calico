@@ -1,6 +1,6 @@
 # Calico for K8s Dockside
 
-A plugin for the [K8s Dockside](https://github.com/rogerwesterbo/k8sdockside)
+A plugin for the [K8s Dockside](https://github.com/k8sdockside/k8sdockside)
 desktop app that shows [Calico](https://www.tigera.io/project-calico/) as what it
 does: pod addresses, routing and network policy. Plain HTML and script, no build
 step. Needs **K8s Dockside 0.0.27 or newer**; Prometheus is optional, for charts.
@@ -30,7 +30,7 @@ step. Needs **K8s Dockside 0.0.27 or newer**; Prometheus is optional, for charts
 **Settings → Plugins → From a repository** with:
 
 ```
-https://github.com/rogerwesterbo/k8sdockside-calico.git
+https://github.com/k8sdockside/calico.git
 ```
 
 ## What it reads, and what it may change
@@ -73,5 +73,5 @@ ui/flows.*           flow logs from Whisker
 ui/pod.* policy.* ippool.*                  detail panels
 ```
 
-`go run github.com/rogerwesterbo/k8sdockside/cmd/plugincheck@main .` checks it,
+`go run github.com/k8sdockside/k8sdockside/cmd/plugincheck@main .` checks it,
 as CI does.

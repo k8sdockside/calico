@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/rogerwesterbo/k8sdockside/main/docs/plugin.schema.json",
+    "$schema": "https://raw.githubusercontent.com/k8sdockside/k8sdockside/main/docs/plugin.schema.json",
     "id": "calico",
     "name": "Calico",
     "version": "1.0.0",
@@ -7,13 +7,13 @@
     "tagline": "pod networking, IPAM and network policy",
     "icon": "shield",
     "docs": "https://docs.tigera.io/calico/latest/about/",
-    "author": "Roger Westerbo",
+    "author": "K8s Dockside",
     "links": [
         { "label": "projectcalico.org", "url": "https://www.tigera.io/project-calico/" },
         { "label": "Documentation", "url": "https://docs.tigera.io/calico/latest/about/" },
         { "label": "Policy tiers", "url": "https://docs.tigera.io/calico/latest/network-policy/policy-tiers/tiered-policy" },
         { "label": "GitHub", "url": "https://github.com/projectcalico/calico" },
-        { "label": "Plugin source", "url": "https://github.com/rogerwesterbo/k8sdockside-calico" }
+        { "label": "Plugin source", "url": "https://github.com/k8sdockside/calico" }
     ],
     "description": "Calico gives every pod an address from its IP pools, routes between nodes over BGP or a VXLAN/IPIP overlay, and enforces network policy — Calico's own, tiered, and Kubernetes NetworkPolicies — in iptables, nftables or eBPF.\n\nStart with the Policy board: every tier as a lane in the order Calico evaluates it, each policy as a card with its rules as coloured pips and the workloads it selects. Open a policy to read it rule by rule, or switch to Trace to follow one pod's traffic through the tiers to where it is allowed or dropped. Namespaces that no policy protects are listed with an Isolate button.\n\nIP address management maps every IPAM block by the node it belongs to and how full it is, down to who holds each address; Routing & BGP draws the node mesh, route reflectors and external peers. Flow logs reads Whisker (Calico 3.30+): who talks to whom, what is denied and by which policy, flow by flow. Pods, IP pools and policies also get a Calico panel in their detail view. The pages ask for three changes only — a default-deny NetworkPolicy, turning on Whisker and Goldmane, and a NetworkPolicy that lets the API server reach Whisker — and you see each before it is made.",
     "requires": [
