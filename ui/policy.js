@@ -35,14 +35,12 @@
         root.appendChild(p);
     }
 
-    function title(root, text, count) {
-        var h = el('h3', 'mini-title', text);
-        h.style.margin = '14px 0 6px';
-        h.style.display = 'flex';
-        h.style.alignItems = 'center';
-        h.style.gap = '8px';
-        if (count !== undefined) h.appendChild(el('span', 'count muted', String(count)));
-        root.appendChild(h);
+    // A titled block that folds, the way the app's own sections do; what
+    // follows it goes into the returned body.
+    function section(root, id, title, count, what) {
+        var sec = sdk.ui.section({ id: id, title: title, count: count, what: what });
+        root.appendChild(sec.root);
+        return sec.body;
     }
 
     function ordinal(n) {
@@ -94,29 +92,29 @@
         }
 
         // What it selects.
-        title(root, 'Selects');
+        var selects = section(root, 'selects', 'Selects', pol.matches.length || undefined, 'what it selects');
         if (k8s) {
-            root.appendChild(K.selectorCode(pol.selector || '{} — every pod in ' + pol.namespace));
+            selects.appendChild(K.selectorCode(pol.selector || '{} — every pod in ' + pol.namespace));
             var eq = el('p', 'faint small', 'Calico reads it as ');
             eq.appendChild(el('code', '', pol.calicoSelector));
             eq.style.marginTop = '4px';
-            root.appendChild(eq);
+            selects.appendChild(eq);
         } else {
             var sel = window.CalicoSelector.parse(pol.selector);
-            root.appendChild(K.selectorCode(pol.selector || 'all()', sel.ok ? '' : sel.error));
+            selects.appendChild(K.selectorCode(pol.selector || 'all()', sel.ok ? '' : sel.error));
             if (pol.namespaceSelector) {
                 var ns = window.CalicoSelector.parse(pol.namespaceSelector);
                 var nl = el('p', 'faint small', 'in namespaces matching');
                 nl.style.margin = '6px 0 4px';
-                root.appendChild(nl);
-                root.appendChild(K.selectorCode(pol.namespaceSelector, ns.ok ? '' : ns.error));
+                selects.appendChild(nl);
+                selects.appendChild(K.selectorCode(pol.namespaceSelector, ns.ok ? '' : ns.error));
             }
             if (pol.serviceAccountSelector) {
                 var sa = window.CalicoSelector.parse(pol.serviceAccountSelector);
                 var sl = el('p', 'faint small', 'running as service accounts matching');
                 sl.style.margin = '6px 0 4px';
-                root.appendChild(sl);
-                root.appendChild(K.selectorCode(pol.serviceAccountSelector, sa.ok ? '' : sa.error));
+                selects.appendChild(sl);
+                selects.appendChild(K.selectorCode(pol.serviceAccountSelector, sa.ok ? '' : sa.error));
             }
         }
         if (pol.matches.length) {
@@ -130,21 +128,18 @@
                 list.appendChild(b);
             });
             if (pol.matches.length > MAX_PODS) list.appendChild(el('span', 'faint small', 'and ' + (pol.matches.length - MAX_PODS) + ' more'));
-            root.appendChild(list);
+            selects.appendChild(list);
         }
 
         // The rules.
         if (pol.ingress || pol.rulesIn.length) {
-            title(root, 'Ingress' + (pol.ingress ? '' : ' (not applied)'), pol.rulesIn.length);
-            root.appendChild(K.ruleFlow(pol, 'in', { compact: true }));
+            section(root, 'ingress', 'Ingress' + (pol.ingress ? '' : ' (not applied)'), pol.rulesIn.length, 'the ingress rules').appendChild(K.ruleFlow(pol, 'in', { compact: true }));
         }
         if (pol.egress || pol.rulesOut.length) {
-            title(root, 'Egress' + (pol.egress ? '' : ' (not applied)'), pol.rulesOut.length);
-            root.appendChild(K.ruleFlow(pol, 'out', { compact: true }));
+            section(root, 'egress', 'Egress' + (pol.egress ? '' : ' (not applied)'), pol.rulesOut.length, 'the egress rules').appendChild(K.ruleFlow(pol, 'out', { compact: true }));
         }
 
         var foot = el('div', 'd-tools');
-        foot.style.margin = '12px 0 0';
         foot.style.justifyContent = 'flex-start';
         foot.appendChild(
             K.button('Policy board', 'ghost small', 'lanes', function () {

@@ -3693,6 +3693,25 @@ body.page-section {
     padding: 10px 12px 14px;
 }
 
+/* The panels' titled blocks are the app's ui.section: its heading sets the
+   spacing, so what opens a block drops its own top margin. */
+.section-root > .k8sd-section {
+    margin-top: 12px;
+}
+
+.section-root > .d-tools {
+    margin: 12px 0 0;
+}
+
+.section-root > .k8sd-section + .d-tools {
+    margin-top: 0;
+}
+
+.k8sd-section-body > .rule-flow,
+.k8sd-section-body > .quiet:first-child {
+    margin-top: 0;
+}
+
 .plain {
     display: flex;
     align-items: center;

@@ -76,11 +76,10 @@
         if (!p.nodeSel.ok) nodes.textContent = 'The nodeSelector does not parse: ' + p.nodeSel.error;
         root.appendChild(nodes);
 
-        var mh = el('h3', 'mini-title', 'Blocks');
-        mh.style.margin = '12px 0 6px';
-        root.appendChild(mh);
+        var sec = sdk.ui.section({ id: 'blocks', title: 'Blocks', count: p.blocks.length, what: 'the blocks' });
+        root.appendChild(sec.root);
         if (!p.blocks.length) {
-            root.appendChild(el('p', 'quiet', 'No block yet: Calico carves one the first time a node needs an address from this pool.'));
+            sec.body.appendChild(el('p', 'quiet', 'No block yet: Calico carves one the first time a node needs an address from this pool.'));
         } else {
             var map = el('div', 'mini-map');
             p.blocks.slice(0, MAX_TILES).forEach(function (b) {
@@ -93,7 +92,7 @@
                 add(rest, el('strong', '', '+ ' + C.count(more)), p.blocks.length > MAX_TILES ? 'more' : 'free');
                 map.appendChild(rest);
             }
-            root.appendChild(map);
+            sec.body.appendChild(map);
         }
 
         var issues = model.findings.filter(function (f) {
@@ -106,7 +105,6 @@
         });
 
         var foot = el('div', 'd-tools');
-        foot.style.margin = '12px 0 0';
         foot.style.justifyContent = 'flex-start';
         foot.appendChild(
             K.button('IP address management', 'ghost small', 'grid', function () {

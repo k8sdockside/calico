@@ -34,6 +34,13 @@
         root.appendChild(p);
     }
 
+    // A titled block that folds, the way the app's own sections do.
+    function section(root, id, title, count, what) {
+        var sec = sdk.ui.section({ id: id, title: title, count: count, what: what });
+        root.appendChild(sec.root);
+        return sec.body;
+    }
+
     function verdict(tone, iconName, title, text) {
         var v = el('div', 'panel-verdict ' + tone);
         var body = el('div');
@@ -149,9 +156,7 @@
         }
 
         if (pod.ips.length) {
-            root.appendChild(el('h3', 'mini-title', 'Addresses'));
-            root.lastChild.style.margin = '0 0 6px';
-            root.appendChild(addresses(model, pod));
+            section(root, 'addresses', 'Addresses', pod.ips.length, 'the addresses').appendChild(addresses(model, pod));
         } else {
             plain(root, 'info', 'No address yet.');
         }
@@ -161,8 +166,7 @@
             add(outs, outcome(model, pod, 'in'), outcome(model, pod, 'out'));
             root.appendChild(outs);
 
-            root.appendChild(el('h3', 'mini-title', 'Policies, in evaluation order'));
-            root.lastChild.style.margin = '14px 0 6px';
+            var pols = section(root, 'policies', 'Policies, in evaluation order', enforced.length, 'the policies');
             model.tiers.forEach(function (tier) {
                 var mine = tier.policies.filter(function (p) {
                     return enforced.indexOf(p) >= 0;
@@ -179,12 +183,11 @@
                         }),
                     );
                 });
-                root.appendChild(block);
+                pols.appendChild(block);
             });
         }
         if (pod.staged.length) {
-            root.appendChild(el('h3', 'mini-title', 'Staged — previewed, not enforced'));
-            root.lastChild.style.margin = '14px 0 6px';
+            var staged = section(root, 'staged', 'Staged — previewed, not enforced', pod.staged.length, 'the staged policies');
             var sb = el('div', 'tier-block');
             pod.staged.forEach(function (p) {
                 sb.appendChild(
@@ -197,11 +200,10 @@
                     ),
                 );
             });
-            root.appendChild(sb);
+            staged.appendChild(sb);
         }
 
         var foot = el('div', 'd-tools');
-        foot.style.margin = '12px 0 0';
         foot.style.justifyContent = 'flex-start';
         foot.appendChild(
             K.button('Policy board', 'ghost small', 'lanes', function () {
